@@ -1,0 +1,32 @@
+name: Deploy Nginx
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Ansible
+        run: python3 -m pip install ansible-core
+
+      - name: Prepare SSH and Vault credentials
+        env:
+          ANSIBLE_PRIVATE_KEY: ${{ secrets.ANSIBLE_PRIVATE_KEY }}
+          VAULT_PASSWORD: ${{ secrets.VAULT_PASSWORD }}
+        run: |
+          mkdir -p .ansible
+          printf '%s\n' "$ANSIBLE_PRIVATE_KEY" > .ansible/ansible_key
+          chmod 600 .ansible/ansible_key
+          ssh-keygen -y -f .ansible/ansible_key > .ansible/ansible_key.pub
+          printf '%s\n' "$VAULT_PASSWORD" > .ansible/vault_password
+
+      - name: Deploy and verify idempotence
+        env:
+          ANSIBLE_PUBLIC_KEY: ${{ secrets.ANSIBLE_PUBLIC_KEY }}
+          ANSIBLE_VAULT_PASSWORD_FILE: .ansible/vault_password
+        run: ./scripts/check-idempotence.sh
