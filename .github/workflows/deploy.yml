@@ -8,13 +8,15 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
 
-      - name: Install Ansible
+    steps:
+      - name: Récupérer le projet
+        uses: actions/checkout@v4
+
+      - name: Installer Ansible
         run: python3 -m pip install ansible-core
 
-      - name: Prepare SSH and Vault credentials
+      - name: Préparer les identifiants
         env:
           ANSIBLE_PRIVATE_KEY: ${{ secrets.ANSIBLE_PRIVATE_KEY }}
           VAULT_PASSWORD: ${{ secrets.VAULT_PASSWORD }}
@@ -25,8 +27,7 @@ jobs:
           ssh-keygen -y -f .ansible/ansible_key > .ansible/ansible_key.pub
           printf '%s\n' "$VAULT_PASSWORD" > .ansible/vault_password
 
-      - name: Deploy and verify idempotence
+      - name: Déployer Nginx et vérifier l'idempotence
         env:
-          ANSIBLE_PUBLIC_KEY: ${{ secrets.ANSIBLE_PUBLIC_KEY }}
           ANSIBLE_VAULT_PASSWORD_FILE: .ansible/vault_password
         run: ./scripts/check-idempotence.sh
