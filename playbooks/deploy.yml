@@ -1,0 +1,6 @@
+---
+- name: Déployer le site web avec Nginx
+  hosts: webservers
+  become: true
+  roles:
+    - nginx

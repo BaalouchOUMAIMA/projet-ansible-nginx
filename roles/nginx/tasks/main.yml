@@ -1,0 +1,32 @@
+---
+- name: Mettre à jour le cache APT
+  ansible.builtin.apt:
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: Installer Nginx
+  ansible.builtin.apt:
+    name: nginx
+    state: present
+
+- name: Créer le répertoire du site
+  ansible.builtin.file:
+    path: /var/www/html
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Déployer les fichiers du site
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/../site/"
+    dest: /var/www/html/
+    owner: root
+    group: root
+    mode: preserve
+  notify: Vérifier et recharger Nginx
+
+- name: Démarrer Nginx si nécessaire
+  ansible.builtin.command: nginx
+  args:
+    creates: /run/nginx.pid

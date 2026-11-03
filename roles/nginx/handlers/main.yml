@@ -1,0 +1,4 @@
+---
+- name: Vérifier et recharger Nginx
+  ansible.builtin.shell: nginx -t && nginx -s reload
+  changed_when: true

@@ -1,0 +1,10 @@
+services:
+  serveur-web:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: serveur-web
+    ports:
+      - "2222:22"
+      - "8082:80"
+    restart: unless-stopped
