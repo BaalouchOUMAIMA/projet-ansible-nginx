@@ -2,5 +2,7 @@
 - name: Déployer le site web avec Nginx
   hosts: webservers
   become: true
+  vars_files:
+    - ../vault/deploy-secrets.yml
   roles:
     - nginx

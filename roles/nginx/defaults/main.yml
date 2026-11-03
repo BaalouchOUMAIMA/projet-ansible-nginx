@@ -2,3 +2,4 @@
 nginx_package: nginx
 nginx_document_root: /var/www/html
 nginx_port: 80
+nginx_server_name: _

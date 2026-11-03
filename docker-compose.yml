@@ -4,7 +4,9 @@ services:
       context: .
       dockerfile: docker/Dockerfile
     container_name: serveur-web
+    environment:
+      ANSIBLE_PUBLIC_KEY: "${ANSIBLE_PUBLIC_KEY:?Set ANSIBLE_PUBLIC_KEY to the public key used by Ansible}"
     ports:
-      - "2222:22"
+      - "${ANSIBLE_SSH_PORT:-2222}:22"
       - "8082:80"
     restart: unless-stopped

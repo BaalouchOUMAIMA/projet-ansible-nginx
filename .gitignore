@@ -5,3 +5,4 @@ __pycache__/
 .vault_pass
 .vault-password
 *.log
+.ansible/

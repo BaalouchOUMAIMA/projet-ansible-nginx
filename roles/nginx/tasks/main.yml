@@ -6,12 +6,12 @@
 
 - name: Installer Nginx
   ansible.builtin.apt:
-    name: nginx
+    name: "{{ nginx_package }}"
     state: present
 
 - name: Créer le répertoire du site
   ansible.builtin.file:
-    path: /var/www/html
+    path: "{{ nginx_document_root }}"
     state: directory
     owner: root
     group: root
@@ -20,10 +20,19 @@
 - name: Déployer les fichiers du site
   ansible.builtin.copy:
     src: "{{ playbook_dir }}/../site/"
-    dest: /var/www/html/
+    dest: "{{ nginx_document_root }}/"
     owner: root
     group: root
     mode: preserve
+  notify: Vérifier et recharger Nginx
+
+- name: Configurer le serveur virtuel Nginx
+  ansible.builtin.template:
+    src: nginx-site.conf.j2
+    dest: /etc/nginx/sites-available/default
+    owner: root
+    group: root
+    mode: "0644"
   notify: Vérifier et recharger Nginx
 
 - name: Démarrer Nginx si nécessaire
